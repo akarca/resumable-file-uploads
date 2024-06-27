@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# This example demonstrates how to read the hook event details
+# from environment variables, stdin, and output debug messages.
+
+# We use >&2 to write debugging output to stderr. tusd
+# will forward these to its stderr. Any output from the
+# hook on stdout will be captured by tusd and interpreted
+# as a response.
+INFO_FILE="../data/"$TUS_ID".info"
+DATA_FILE=$(cat $INFO_FILE | jq --raw-output ".Storage.Path")
+ORIG_NAME=$(cat $INFO_FILE | jq --raw-output ".MetaData.filename")
+
+cp $DATA_FILE "../files/$ORIG_NAME"
