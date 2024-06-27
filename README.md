@@ -71,6 +71,8 @@ same WiFi as your computer and find your computers local IP address. Then you ca
 
 2. The uploaded files will be stored in the "files/" directories, whereas tusd uses the "data/" folder for processing uploads. Feel free to delete the contents of this temporary directory after completion.
 
+Bonus: On my iPhone 7 uppy didn't work, so I created another client with tus-js-client: `http://127.0.0.1:8000/tus.html`
+
 ## Detailed Usage and Installation Guide
 
 For more detailed instructions on how to use tusd with uppy and advanced configurations, please visit [TopSelfHosted.com](https://www.topselfhosted.com/blog/resumable-file-upload-server-using-tusd-and-uppy/).

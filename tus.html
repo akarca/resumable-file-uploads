@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Resumable file upload server</title>
+    <meta name="description" content="Resumable file upload server using tusd">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css" rel="stylesheet">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <label>Select files: <input id="input" type="file" multiple></label>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div id="logs"></div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/tus-js-client@latest/dist/tus.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/progressbar.js/0.6.1/progressbar.min.js"></script>
+    <script>
+        function bytesToSize(bytes) {
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+            if (bytes === 0) return 'n/a'
+            const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10)
+            if (i === 0) return `${bytes} ${sizes[i]})`
+            return `${(bytes / (1024 ** i)).toFixed(1)} ${sizes[i]}`
+        }
+        var FileUpload = function(file) {
+            var self = this;
+            self.init = function() {
+                var logs = document.getElementById("logs");
+                self.name = document.createElement("p");
+                self.name.innerHTML = file.name + " Size: " + bytesToSize(file.size);
+                logs.append(self.name);
+                self.pbdiv = document.createElement("div");
+                logs.append(self.pbdiv);
+                self.progressBar = new ProgressBar.Line(self.pbdiv);
+                self.errors = document.createElement("p");
+                logs.append(self.errors);
+                logs.append(document.createElement("hr"));
+            };
+            self.init();
+
+            self.log = function(msg) {
+                self.errors.innerHTML = msg;
+            };
+
+            self.uploader = new tus.Upload(file, {
+                endpoint: "/files/",
+                retryDelays: [0, 3000, 5000, 10000, 20000],
+                metadata: {
+                    filename: file.name,
+                    filetype: file.type,
+                },
+                onError: function(error) {
+                    self.log("Failed: " + error);
+                },
+                onProgress: function(bytesUploaded, bytesTotal) {
+                    var percentage = (bytesUploaded / bytesTotal).toFixed(2)
+                    self.progressBar.animate(percentage);
+                },
+                onSuccess: function() {
+                    self.log("Success");
+                },
+            });
+
+            self.uploader.findPreviousUploads().then(function(previousUploads) {
+                if (previousUploads.length) {
+                    for (var i = 0; i < previousUploads.length; i++) {
+                        self.uploader.resumeFromPreviousUpload(previousUploads[i]);
+                    }
+                }
+            });
+
+            self.uploader.start();
+        };
+
+        const input = document.getElementById("input");
+
+        input.addEventListener("change", function(e) {
+            var files = e.target.files;
+            for (var i = 0; i < files.length; i++) {
+                new FileUpload(files[i]);
+            }
+        });
+    </script>
+</body>
+</html>

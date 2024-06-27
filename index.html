@@ -5,26 +5,17 @@
     <title>Resumable file upload server</title>
     <meta name="description" content="Resumable file upload server using tusd and uppy">
     <link href="https://releases.transloadit.com/uppy/v3.27.0/uppy.min.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <div id="uppy"></div>
-    <script type="module">
-        import {
-            Uppy,
-            Dashboard,
-            Tus
-        } from "https://releases.transloadit.com/uppy/v3.27.0/uppy.min.mjs";
-
-        const uppy = new Uppy();
-
-        uppy
-            .use(Dashboard, {
+    <script src="https://releases.transloadit.com/uppy/v3.27.0/uppy.min.js"></script>
+    <script>
+        const uppy = new Uppy.Uppy();
+        uppy.use(Uppy.Dashboard, {
                 inline: true,
-                target: '#uppy'
+                target: "body"
             })
-            .use(Tus, {
-                endpoint: '/files/'
+            .use(Uppy.Tus, {
+                endpoint: "/files/"
             });
     </script>
 </body>
