@@ -40,13 +40,15 @@ tusd -upload-dir=./data -behind-proxy -host 0.0.0.0 -port 8080 -hooks-dir=./hook
 
 ## Setting up Nginx (linux)
 
-1. Copy the provided `nginx.conf` file to your nginx configuration directory, typically located at `/etc/nginx/sites-enabled/` or `/etc/nginx/conf.d/`:
+1. Open nginx.conf and edit the path to the repository. Edit the line containing  `/Users/serdar/workspace/resumable-file-uploads/`.
+
+2. Copy the `nginx.conf` file to your nginx configuration directory, typically located at `/etc/nginx/sites-enabled/` or `/etc/nginx/conf.d/`:
 
 ```bash
 sudo cp nginx.conf /etc/nginx/conf.d/tusd.conf
 ```
 
-2. Restart nginx:
+3. Restart nginx:
 
 ```bash
 sudo systemctl restart nginx
